@@ -35,6 +35,7 @@ function init() {
     function addControls() {
         var controls = new function () {
           this.addTrees = false;
+          this.replaceCouch = false;
         };
     
         var gui = new dat.GUI();
@@ -45,7 +46,15 @@ function init() {
           } else {
             deleteTrees();
           }
-        })
+        });
+
+        gui.add(controls, "replaceCouch").onChange(function(replace) {
+            if (replace) {
+                replaceCouch(scene); 
+            } else {
+                switchToOriginalCouch(scene);
+            }
+        });
  
         return controls;
       }
