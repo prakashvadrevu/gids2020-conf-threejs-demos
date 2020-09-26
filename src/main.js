@@ -16,9 +16,11 @@ function init() {
         
         loadScene(gltf, scene);
         
-        addPlaneAndLights(scene)
+        addPlaneAndLights(scene);
         
         addControls();
+
+        initRayCast(scene, camera);
 
         render();        
     },
@@ -36,6 +38,7 @@ function init() {
         var controls = new function () {
           this.addTrees = false;
           this.replaceCouch = false;
+          this.highlight = false;
         };
     
         var gui = new dat.GUI();
@@ -54,6 +57,10 @@ function init() {
             } else {
                 switchToOriginalCouch(scene);
             }
+        });
+
+        gui.add(controls, "highlight").onChange(function(enable) {
+            enableCasting(enable);
         });
  
         return controls;
