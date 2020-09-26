@@ -1,0 +1,13 @@
+{
+  "name": "conference-gids2020-threejs-demos",
+  "version": "1.0.0",
+  "description": "Collection of ThreeJS demos for GIDS Conference 2020",
+  "main": "src/index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "Prakash Vadrevu",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.120.1"
+  }
+}
