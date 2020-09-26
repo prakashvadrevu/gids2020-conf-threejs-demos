@@ -1,14 +1,17 @@
 function init() {
-    var renderer = initRenderer();
-    var camera = initCamera();
-    var scene = new THREE.Scene();
+    let renderer = initRenderer();
+    let camera;
+    let scene = new THREE.Scene();
+    var clock = new THREE.Clock();
+    let trackballControls;
     
-    var loader = new THREE.GLTFLoader();
+    let loader = new THREE.GLTFLoader();
     loader.load('../models/house.gltf',
     // called when the resource is loaded
     function ( gltf ) {
-        var camPositionFromScene = gltf.scene.children.filter(c => c.name === "Camera")[0].position;
+        let camPositionFromScene = gltf.scene.children.filter(c => c.name === "Camera")[0].position;
         camera = initCamera(new THREE.Vector3(camPositionFromScene.x, camPositionFromScene.y, camPositionFromScene.z));
+        trackballControls = initTrackballControls(camera, renderer);
         
         loadScene(gltf, scene);
         
@@ -22,9 +25,9 @@ function init() {
     );
     
     function addPlane(scene) {
-        var planeGeometry = new THREE.PlaneGeometry(1000, 1000, 20, 20);
-        var planeMaterial = new THREE.MeshLambertMaterial();
-        var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        let planeGeometry = new THREE.PlaneGeometry(1000, 1000, 20, 20);
+        let planeMaterial = new THREE.MeshLambertMaterial();
+        let plane = new THREE.Mesh(planeGeometry, planeMaterial);
         plane.receiveShadow = true;
         
         // rotate and position the plane
@@ -43,20 +46,20 @@ function init() {
     
     function addLights(plane) {
         // add spotlight for a bit of light
-        var spotLight0 = new THREE.SpotLight(0xcccccc);
+        let spotLight0 = new THREE.SpotLight(0xcccccc);
         spotLight0.position.set(-40, 60, -10);
         spotLight0.lookAt(plane);
         scene.add(spotLight0);
         
-        var target = new THREE.Object3D();
+        let target = new THREE.Object3D();
         target.position = new THREE.Vector3(5, 0, 0);
         
-        var hemiLight = new THREE.HemisphereLight(0x0000ff, 0x00ff00, 0.6);
+        let hemiLight = new THREE.HemisphereLight(0x0000ff, 0x00ff00, 0.6);
         hemiLight.position.set(0, 500, 0);
         scene.add(hemiLight);
         
-        var pointColor = "#ffffff";
-        var dirLight = new THREE.DirectionalLight(pointColor);
+        let pointColor = "#ffffff";
+        let dirLight = new THREE.DirectionalLight(pointColor);
         dirLight.position.set(30, 10, 50);
         dirLight.castShadow = true;
         dirLight.target = plane;
@@ -72,6 +75,7 @@ function init() {
     }
     
     function render() {
+        trackballControls.update(clock.getDelta());
         requestAnimationFrame(render);
         renderer.render(scene, camera);
     }
