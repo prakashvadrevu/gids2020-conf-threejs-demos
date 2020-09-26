@@ -109,3 +109,8 @@ function initTrackballControls(camera, renderer) {
 
     return trackballControls;
 }
+
+function removeObject(scene, name) {
+    var selectedObject = scene.getObjectByName(name);
+    scene.remove( selectedObject );
+}
