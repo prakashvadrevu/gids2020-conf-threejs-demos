@@ -1,7 +1,7 @@
 
 function replaceCouch(scene) {
-    let topFloor = scene.children.filter(c => c.name === "first_floor--first_floor")[0];
-    topFloor.visible = false;
+    hideFirstFloorWindows(scene)
+
     let couch = scene.children.filter(c => c.name === "couch")[0];
     couch.visible = false;
 
@@ -34,4 +34,18 @@ function switchToOriginalCouch(scene) {
     if (secondCouch.length > 0) {
       secondCouch[0].visible = false;
     }
+}
+
+function hideFirstFloorWindows(scene) {
+    let topFloor = scene.children.filter(c => c.name === "first_floor_window--first_floor_window_0")[0];
+    topFloor.visible = false;
+
+    topFloor = scene.children.filter(c => c.name === "first_floor_window--first_floor_window_1")[0];
+    topFloor.visible = false;
+
+    topFloor = scene.children.filter(c => c.name === "first_floor_window--first_floor_window_2")[0];
+    topFloor.visible = false;
+
+    topFloor = scene.children.filter(c => c.name === "first_floor_window--first_floor_window_3")[0];
+    topFloor.visible = false;
 }

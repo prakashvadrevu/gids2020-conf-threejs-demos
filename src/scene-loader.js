@@ -23,10 +23,14 @@ function loadScene(gltf, scene) {
 
   // TODO: For some reason, both `ground_floor` and `table` are being skipped in the above mapping. So, process them here.
   let groundFloor = gltf.scene.children.filter(c => c.name === "ground_floor")[0];
-  convertToGeometry(groundFloor, groundFloor, scene);
+  if (groundFloor) {
+    convertToGeometry(groundFloor, groundFloor, scene);
+  }
 
   let table = gltf.scene.children.filter(c => c.name === "table")[0];
-  convertToGeometryAndLoadChildrenToScene(table, table, scene);
+  if (table) {
+    convertToGeometryAndLoadChildrenToScene(table, table, scene);
+  }
 }
 
 function convertToGeometryAndLoadChildrenToScene(object, parentObject, scene) {
