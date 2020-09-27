@@ -2,7 +2,7 @@ function init() {
 
   var clock = new THREE.Clock();
   var renderer = initRenderer();
-  var camera = initCamera(new THREE.Vector3(00, 60, 80));
+  var camera = initCamera(new THREE.Vector3(00, 80, -60));
   var ambiColor = "#1c1c1c";
   let trackballControls;
 
@@ -25,7 +25,7 @@ function init() {
       target.position = new THREE.Vector3(5, 0, 0);
     
       var spotLight = new THREE.SpotLight("#ffffff");
-      spotLight.position.set(0.312385116370123, 30, -20.124013305595888);
+      spotLight.position.set(0.312385116370123, 30, 20.124013305595888);
       spotLight.castShadow = true;
       spotLight.shadow.camera.near = 1;
       spotLight.shadow.camera.far = 100;
@@ -40,14 +40,14 @@ function init() {
       scene.add(pp);
 
       // add a small sphere simulating the pointlight
-      var sphereLight = new THREE.SphereGeometry(0.5);
+      var sphereLight = new THREE.SphereGeometry(1);
       var sphereLightMaterial = new THREE.MeshBasicMaterial({
         color: 0xac6c25
       });
       var sphereLightMesh = new THREE.Mesh(sphereLight, sphereLightMaterial);
       sphereLightMesh.castShadow = true;
     
-      sphereLightMesh.position.set(0.312385116370123, 30, -20.124013305595888);
+      sphereLightMesh.position.set(0.312385116370123, 30, 20.124013305595888);
       scene.add(sphereLightMesh);
 
       render();
@@ -66,7 +66,7 @@ function init() {
   function addDogAndCamera(scene, gltf) {
     var dog = gltf.scene.children.filter(c => c.name === 'dog')[0];
 
-    dog.position.x = 30;
+    dog.position.x = 40;
     dog.position.y = 6;
     dog.position.z = 2;
     dog.castShadow = true;
@@ -76,9 +76,10 @@ function init() {
 
     let camera = gltf.scene.children.filter(c => c.name === 'camera')[0];
 
-    camera.position.x = -4;
+    camera.position.x = 5;
     camera.position.y = 15;
     camera.position.z = 0;
+    camera.rotation.z = 0.2;
     camera.scale.set(2, 2, 2);
     camera.castShadow = false;
     doNotCastShadow(camera);
