@@ -19,7 +19,6 @@ function initCamera(initialPosition) {
 
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.copy(position);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
 
     return camera;
 }

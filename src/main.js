@@ -5,16 +5,21 @@ function init() {
     var clock = new THREE.Clock();
     let trackballControls;
     let controls = addControls();
+    let enableTrackballControls = true;
     
     let loader = new THREE.GLTFLoader();
     loader.load('../models/house.gltf',
     // called when the resource is loaded
     function ( gltf ) {
-        let camPositionFromScene = gltf.scene.children.filter(c => c.name === "Camera")[0].position;
-        camera = initCamera(new THREE.Vector3(camPositionFromScene.x, camPositionFromScene.y, camPositionFromScene.z));
+        let camFromScene = gltf.scene.children.filter(c => c.name === "Camera")[0];
+        camera = initCamera(camFromScene.position);
         trackballControls = initTrackballControls(camera, renderer);
+        camera.position.copy(camFromScene.position);
         
         loadScene(gltf, scene);
+        let customizationCamFromScene = gltf.scene.children.filter(c => c.name === "customization-camera")[0];
+        scene.add(camFromScene);
+        scene.add(customizationCamFromScene);
         
         addPlaneAndLights(scene);
 
@@ -27,9 +32,11 @@ function init() {
     );
 
     function render() {
+      if (enableTrackballControls) {
         trackballControls.update(clock.getDelta());
-        requestAnimationFrame(render);
-        renderer.render(scene, camera);
+      }
+      requestAnimationFrame(render);
+      renderer.render(scene, camera);
     }
 
     function addControls() {
@@ -38,6 +45,7 @@ function init() {
           this.replaceCouch = false;
           this.highlight = false;
           this.addMemoryIntensiveTrees = false;
+          this.switchToCustomizationCamera = false;
         };
     
         var gui = new dat.GUI();
@@ -69,8 +77,46 @@ function init() {
         gui.add(controls, "highlight").onChange(function(enable) {
             enableCasting(enable);
         });
- 
+
+        gui.add(controls, "switchToCustomizationCamera").onChange(
+          function(s) {
+            if (s) {
+              switchToCustomizationCamera();
+            } else {
+              switchToMainCamera();
+            }
+          }
+        );
+
         return controls;
-      }
+    }
+
+    function switchToCustomizationCamera() {
+      enableTrackballControls = false;
+      hideFirstFloorWindows(false);
+      let customizationCamera = scene.children.filter(c => c.name === "customization-camera")[0];
+      camera.position.copy(customizationCamera.position);
+    }
+
+    function switchToMainCamera() {
+      enableTrackballControls = true;
+      hideFirstFloorWindows(true);
+      let mainCamera = scene.children.filter(c => c.name === "Camera")[0];
+      camera.position.copy(mainCamera.position);
+    }
+
+    function hideFirstFloorWindows(value) {
+      let topFloor = scene.children.filter(c => c.name === "first_floor_window--first_floor_window_0")[0];
+      topFloor.visible = value;
+  
+      topFloor = scene.children.filter(c => c.name === "first_floor_window--first_floor_window_1")[0];
+      topFloor.visible = value;
+  
+      topFloor = scene.children.filter(c => c.name === "first_floor_window--first_floor_window_2")[0];
+      topFloor.visible = value;
+  
+      topFloor = scene.children.filter(c => c.name === "first_floor_window--first_floor_window_3")[0];
+      topFloor.visible = value;
+  }
 
 }
