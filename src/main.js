@@ -17,8 +17,6 @@ function init() {
         loadScene(gltf, scene);
         
         addPlaneAndLights(scene);
-        
-        addControls();
 
         initRayCast(scene, camera);
 
@@ -39,9 +37,18 @@ function init() {
           this.addTrees = false;
           this.replaceCouch = false;
           this.highlight = false;
+          this.addMemoryIntensiveTrees = false;
         };
     
         var gui = new dat.GUI();
+
+        gui.add(controls, "addMemoryIntensiveTrees").onChange(function(replace) {
+          if (replace) {
+            addMemoryIntensiveTrees(scene);
+          } else {
+            deleteTrees(scene);
+          }
+        });
     
         gui.add(controls, "addTrees").onChange(function(replace) {
           if (replace) {
