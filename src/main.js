@@ -46,6 +46,7 @@ function init() {
           this.highlight = false;
           this.addMemoryIntensiveTrees = false;
           this.switchToCustomizationCamera = false;
+          this.crossSectionalView = false;
         };
     
         var gui = new dat.GUI();
@@ -84,6 +85,16 @@ function init() {
               switchToCustomizationCamera();
             } else {
               switchToMainCamera();
+            }
+          }
+        );
+
+        gui.add(controls, "crossSectionalView").onChange(
+          function(s) {
+            if (s) {
+              showCrossSectionalView(scene);
+            } else {
+              showFullView(scene);
             }
           }
         );
