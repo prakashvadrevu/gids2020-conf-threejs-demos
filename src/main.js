@@ -1,29 +1,33 @@
+const { Vector2 } = require("three");
+
 function init() {
     let renderer = initRenderer();
     let camera;
+    let trackballControls;
+
+    let mainCamera;
+    let mainCameraTrackballControls;    
+
+    let customizationCamera;
+    let customizationCameraTrackballControls;
+
+
     let scene = new THREE.Scene();
     var clock = new THREE.Clock();
-    let trackballControls;
+
     let controls = addControls();
-    let enableTrackballControls = true;
-    
     let loader = new THREE.GLTFLoader();
     loader.load('../models/house.gltf',
     // called when the resource is loaded
     function ( gltf ) {
-        let camFromScene = gltf.scene.children.filter(c => c.name === "Camera")[0];
-        camera = initCamera(camFromScene.position);
-        trackballControls = initTrackballControls(camera, renderer);
-        camera.position.copy(camFromScene.position);
-        
+        initMainCamera(gltf, scene);
+        initCustomizationCamera(gltf, scene);
+
         loadScene(gltf, scene);
-        let customizationCamFromScene = gltf.scene.children.filter(c => c.name === "customization-camera")[0];
-        scene.add(camFromScene);
-        scene.add(customizationCamFromScene);
-        
+
         addPlaneAndLights(scene);
 
-        initRayCast(scene, camera);
+        initRayCast(scene);
 
         render();        
     },
@@ -32,9 +36,7 @@ function init() {
     );
 
     function render() {
-      if (enableTrackballControls) {
-        trackballControls.update(clock.getDelta());
-      }
+      trackballControls.update(clock.getDelta());
       requestAnimationFrame(render);
       renderer.render(scene, camera);
     }
@@ -76,7 +78,7 @@ function init() {
         });
 
         gui.add(controls, "highlight").onChange(function(enable) {
-            enableCasting(enable);
+            enableCasting(enable, camera);
         });
 
         gui.add(controls, "switchToCustomizationCamera").onChange(
@@ -102,21 +104,35 @@ function init() {
         return controls;
     }
 
+    function initMainCamera(gltf, scene) {
+      let camFromScene = gltf.scene.children.filter(c => c.name === "Camera")[0];
+      mainCamera = initCamera(camFromScene.position);
+      mainCameraTrackballControls = initTrackballControls(mainCamera, renderer);
+      mainCamera.position.copy(camFromScene.position);
+
+      updateCamera(mainCamera, mainCameraTrackballControls);
+      scene.add(camFromScene);
+    }
+
+    function initCustomizationCamera(gltf, scene) {
+      let customizationCamFromScene = gltf.scene.children.filter(c => c.name === "customization-camera")[0];
+      customizationCamera = initCamera(customizationCamFromScene.position);
+      customizationCameraTrackballControls = initTrackballControls(customizationCamera, renderer);
+      customizationCamera.position.copy(customizationCamFromScene.position);
+      scene.add(customizationCamFromScene);
+    }
+
     function switchToCustomizationCamera() {
-      enableTrackballControls = false;
-      hideFirstFloorWindows(false);
-      let customizationCamera = scene.children.filter(c => c.name === "customization-camera")[0];
-      camera.position.copy(customizationCamera.position);
+      showFirstFloorWindows(false);
+      updateCamera(customizationCamera, customizationCameraTrackballControls);
     }
 
     function switchToMainCamera() {
-      enableTrackballControls = true;
-      hideFirstFloorWindows(true);
-      let mainCamera = scene.children.filter(c => c.name === "Camera")[0];
-      camera.position.copy(mainCamera.position);
+      showFirstFloorWindows(true);
+      updateCamera(mainCamera, mainCameraTrackballControls);
     }
 
-    function hideFirstFloorWindows(value) {
+    function showFirstFloorWindows(value) {
       let topFloor = scene.children.filter(c => c.name === "first_floor_window--first_floor_window_0")[0];
       topFloor.visible = value;
   
@@ -128,6 +144,12 @@ function init() {
   
       topFloor = scene.children.filter(c => c.name === "first_floor_window--first_floor_window_3")[0];
       topFloor.visible = value;
+  }
+
+  function updateCamera(cam, trackballCtrls) {
+    camera = cam;
+    trackballControls = trackballCtrls;
+    trackballControls.update(clock.getDelta());
   }
 
 }
