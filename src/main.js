@@ -1,4 +1,4 @@
-const { Vector2 } = require("three");
+const { Vector2, LessStencilFunc } = require("three");
 
 function init() {
     let renderer = initRenderer();
@@ -6,11 +6,11 @@ function init() {
     let trackballControls;
 
     let mainCamera;
+    let mainCameraPosition;
     let mainCameraTrackballControls;    
 
     let customizationCamera;
     let customizationCameraTrackballControls;
-
 
     let scene = new THREE.Scene();
     var clock = new THREE.Clock();
@@ -38,6 +38,7 @@ function init() {
     function render() {
       trackballControls.update(clock.getDelta());
       requestAnimationFrame(render);
+      TWEEN.update();
       renderer.render(scene, camera);
     }
 
@@ -107,6 +108,7 @@ function init() {
     function initMainCamera(gltf, scene) {
       let camFromScene = gltf.scene.children.filter(c => c.name === "Camera")[0];
       mainCamera = initCamera(camFromScene.position);
+      mainCameraPosition = new THREE.Vector3(camFromScene.position.x, camFromScene.position.y, camFromScene.position.z);
       mainCameraTrackballControls = initTrackballControls(mainCamera, renderer);
       mainCamera.position.copy(camFromScene.position);
 
@@ -124,12 +126,22 @@ function init() {
 
     function switchToCustomizationCamera() {
       showFirstFloorWindows(false);
-      updateCamera(customizationCamera, customizationCameraTrackballControls);
+
+      const toPosition = new THREE.Vector3(customizationCamera.position.x, customizationCamera.position.y, customizationCamera.position.z);
+      const destPosition = scene.children.filter(c => c.name === "couch")[0].position;
+      let targetToLookAt = new THREE.Vector3(destPosition.x, destPosition.y, destPosition.z);
+
+      tweenToView(toPosition, targetToLookAt);
     }
 
     function switchToMainCamera() {
       showFirstFloorWindows(true);
-      updateCamera(mainCamera, mainCameraTrackballControls);
+
+      const toPosition = new THREE.Vector3(mainCameraPosition.x, mainCameraPosition.y, mainCameraPosition.z);
+      const destPosition = scene.children.filter(c => c.name === "couch")[0].position;
+      let targetToLookAt = new THREE.Vector3(destPosition.x, destPosition.y, destPosition.z);
+
+      tweenToView(toPosition, targetToLookAt);      
     }
 
     function showFirstFloorWindows(value) {
@@ -150,6 +162,16 @@ function init() {
     camera = cam;
     trackballControls = trackballCtrls;
     trackballControls.update(clock.getDelta());
+  }
+
+  function tweenToView(toPosition, targetToLookAt) {
+    trackballControls.target = targetToLookAt;
+    new TWEEN.Tween({...camera.position})
+      .to(toPosition, 1000)
+      .onUpdate(function() {
+        camera.position.copy(this);
+        trackballControls.update(clock.getDelta());
+      }).start();
   }
 
 }
