@@ -10,6 +10,8 @@ function highlightObject(scene, object) {
 }
 
 function highlight(scene, mesh) {
+    if (!mesh.visible)
+        return;
     let name = "bounding-box_" + mesh.uuid;    
     let existingChild = scene.children.filter(c => c.name === name);
     if (existingChild.length > 0) {
