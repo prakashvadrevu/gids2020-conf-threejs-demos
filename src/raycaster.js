@@ -30,11 +30,22 @@ function performRayCast(scene) {
 
     // drawLine(scene, raycaster);
 
-    // calculate objects intersecting the picking ray
-    let intersects = raycaster.intersectObjects(scene.children, true);
+    let intersects = raycaster.intersectObjects(scene.children.filter(c => c.type === 'Object3D'), true);
     if (intersects.length > 0) {
-        highlightObject(scene, intersects[0].object);
+        const parent = getObject3DParent(intersects[0].object);
+        if (parent) {
+            parent.children.forEach(object => highlightObject(scene, object));
+        }
     }
+}
+
+function getObject3DParent(mesh){
+    const { parent } = mesh;
+    if (!parent)
+        return;
+    if (parent.type === 'Object3D')
+        return parent;
+    return getObject3DParent(parent);
 }
 
 // For debugging

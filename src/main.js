@@ -1,4 +1,4 @@
-const { Vector2, LessStencilFunc } = require("three");
+let trackBallPosition;
 
 function init() {
     let renderer = initRenderer();
@@ -94,6 +94,16 @@ function init() {
 
         gui.add(controls, "crossSectionalView").onChange(
           function(s) {
+            if (!trackBallPosition) {
+              trackBallPosition = {...trackballControls.object.position};
+            }
+            const topPosition = new THREE.Vector3(1, 20, 1);
+            const startPosition = s ? {...trackBallPosition} : {...topPosition};
+            const endPosition = s ? {...topPosition} : {...trackBallPosition};
+            new TWEEN.Tween(startPosition).to(endPosition, 1000).onUpdate(function() {
+              trackballControls.object.position.copy(this);
+              trackballControls.update(THREE.Clock());
+            }).start();
             if (s) {
               showCrossSectionalView(scene);
             } else {
