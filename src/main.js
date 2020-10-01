@@ -50,6 +50,7 @@ function init() {
           this.addMemoryIntensiveTrees = false;
           this.switchToCustomizationCamera = false;
           this.crossSectionalView = false;
+          this.couch = 'couch';
         };
     
         var gui = new dat.GUI();
@@ -111,6 +112,23 @@ function init() {
             }
           }
         );
+
+        gui.add(controls, 'couch', { first: 'first', second: 'second', third: 'third' } ).onChange(function(couchNumber) {
+          let couchName;
+          switch (couchNumber) {
+            case "first":
+              couchName = "couch";
+              break;
+            case "second":
+              couchName = "second-couch";
+              break;
+            case "third":
+              couchName = "third-couch";
+              break;
+          }
+          replaceCouch(scene, couchName);
+        }
+      );;
 
         return controls;
     }

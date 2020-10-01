@@ -1,19 +1,24 @@
 
-function replaceCouch(scene) {
+function replaceCouch(scene, couchName) {
     hideFirstFloorWindows(scene)
-
-    let couch = scene.children.filter(c => c.name === "couch")[0];
-    couch.visible = false;
-
-    let secondCouch = scene.children.filter(c => c.name === "second-couch");
-    if (secondCouch.length > 0) {
-        secondCouch[0].visible = true;
-        return;
+    const existingCouchArr = scene.children.filter(c => c.name.indexOf('couch') > -1);
+    if (existingCouchArr.length > 0) {
+        const existingCouch = existingCouchArr.filter(c => c.name === couchName)[0];
+        console.log(existingCouch);
+        if (existingCouch) {
+            existingCouchArr.forEach(c => c.visible = false);
+            existingCouch.visible = true;
+            return;
+        }
     }
-
     var loader = new THREE.GLTFLoader();
-    loader.load('../models/second-couch.gltf',
+    loader.load(`../models/${couchName}.gltf`,
         ( gltf ) => {
+            let couches = scene.children.filter(c => c.name === "couch" || c.name === 'second-couch' || c.name === 'third-couch');
+            couches.forEach(couch => couch.visible = false);
+            const couch = couches.filter(c => c.name === 'couch')[0];
+            
+
             let secondCouch = gltf.scene.children[0];
             secondCouch.position.x = couch.position.x;
             secondCouch.position.y = couch.position.y;
