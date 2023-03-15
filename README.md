@@ -1,6 +1,6 @@
 # GIDS Conference 2020 Three.js Demos
 
-This repo is a collection of examples demonstrated in the GIDS Conference 2020. Using the example of a hosue, here is the list of concepts this repo has code for:
+This repo is a collection of examples demonstrated in the [GIDS Conference 2020](https://saltmarch.com/watch/building-enterprise-3d-web-applications). Using the example of a house, here is the list of concepts this repo has code for:
 
 - How to get a cross sectional view of the house?
 - How to illuminate an L shaped (apart from regular rectangle / square shapes) room and darken rest of the house?
